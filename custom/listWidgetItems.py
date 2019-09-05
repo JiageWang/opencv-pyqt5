@@ -35,7 +35,7 @@ class GrayingItem(MyItem):
 class FilterItem(MyItem):
 
     def __init__(self, parent=None):
-        super().__init__('平滑操作', parent=parent)
+        super().__init__('平滑处理', parent=parent)
         self._ksize = 3
         self._kind = MEAN_FILTER
         self._sigmax = 0
@@ -52,7 +52,7 @@ class FilterItem(MyItem):
 
 class MorphItem(MyItem):
     def __init__(self, parent=None):
-        super().__init__('形态操作', parent=parent)
+        super().__init__(' 形态学 ', parent=parent)
         self._ksize = 3
         self._kind = ERODE_MORPH
         self._kshape = RECT_MORPH_SHAPE
@@ -66,7 +66,7 @@ class MorphItem(MyItem):
 class GradItem(MyItem):
 
     def __init__(self, parent=None):
-        super().__init__('梯度操作', parent=parent)
+        super().__init__('图像梯度', parent=parent)
         self._kind = SOBEL_GRAD
         self._ksize = 3
         self._dx = 1
@@ -75,11 +75,11 @@ class GradItem(MyItem):
     def __call__(self, img):
         if self._dx == 0 and self._dy == 0 and self._kind != LAPLACIAN_GRAD:
             self.setBackground(QColor(255, 0, 0))
-            self.setText('梯度操作 （无效: dx与dy不同时为0）')
+            self.setText('图像梯度 （无效: dx与dy不同时为0）')
             return img
         else:
             self.setBackground(QColor(200, 200, 200))
-            self.setText('梯度操作')
+            self.setText('图像梯度')
         if self._kind == SOBEL_GRAD:
             return cv2.Sobel(img, -1, self._dx, self._dy, self._ksize)
         elif self._kind == SCHARR_GRAD:
@@ -90,7 +90,7 @@ class GradItem(MyItem):
 
 class ThresholdItem(MyItem):
     def __init__(self, parent=None):
-        super().__init__('阈值操作', parent=parent)
+        super().__init__('阈值处理', parent=parent)
         self._thresh = 127
         self._maxval = 255
         self._type = BINARY_THRESH

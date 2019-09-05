@@ -12,15 +12,10 @@ class MyApp(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super(MyApp, self).__init__()
         self.setupUi(self)
+        self.setWindowTitle('Opencv图像处理')
+        self.setWindowIcon(QIcon('icons/main.png'))
         self.src_img = None
-        self.label.setAlignment(Qt.AlignCenter)
-        self.label.setStyleSheet(
-            """
-            QLabel{
-            background: #4B4B4B
-            }
-            """
-        )
+        self.statusbar.close()
         self.stackedWidget.close()
 
     def update_label(self):
@@ -30,15 +25,16 @@ class MyApp(QMainWindow, Ui_MainWindow):
         for i in range(self.useListWidget.count()):
             img = self.useListWidget.item(i)(img)
 
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # bgr -> rgb
-        h, w, c = img.shape  # 获取图片形状
-        image = QImage(img, w, h, 3 * w, QImage.Format_RGB888)
-        pixmap = QPixmap.fromImage(image)
-
-        self.item = QGraphicsPixmapItem(pixmap)  # 创建像素图元
-        self.scene = QGraphicsScene()  # 创建场景
-        self.scene.addItem(self.item)
-        self.label.setScene(self.scene)
+        # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # bgr -> rgb
+        # h, w, c = img.shape  # 获取图片形状
+        # image = QImage(img, w, h, 3 * w, QImage.Format_RGB888)
+        # pixmap = QPixmap.fromImage(image)
+        #
+        # self.item = QGraphicsPixmapItem(pixmap)  # 创建像素图元
+        # self.scene = QGraphicsScene()  # 创建场景
+        # self.scene.addItem(self.item)
+        # self.graphicsView.setScene(self.scene)
+        self.graphicsView.set_image(img)
 
 
 if __name__ == "__main__":

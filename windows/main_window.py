@@ -10,6 +10,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from custom.tableWidget import *
 from custom.listWidgets import *
 from custom.treeView import *
+from custom.graphicsView import *
 
 
 class Ui_MainWindow(object):
@@ -34,15 +35,15 @@ class Ui_MainWindow(object):
         self.treeView.setMinimumSize(QtCore.QSize(200, 0))
         self.treeView.setObjectName("treeView")
         self.horizontalLayout.addWidget(self.treeView)
-        self.label = QGraphicsView(self.centralwidget)
+        self.graphicsView = GraphicsView(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setHorizontalStretch(1)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
-        self.label.setSizePolicy(sizePolicy)
-        self.label.setMinimumSize(QtCore.QSize(1280, 960))
-        self.label.setObjectName("label")
-        self.horizontalLayout.addWidget(self.label)
+        sizePolicy.setHeightForWidth(self.graphicsView.sizePolicy().hasHeightForWidth())
+        self.graphicsView.setSizePolicy(sizePolicy)
+        self.graphicsView.setMinimumSize(QtCore.QSize(640, 480))
+        self.graphicsView.setObjectName("label")
+        self.horizontalLayout.addWidget(self.graphicsView)
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setObjectName("verticalLayout")
         self.useListWidget = UsedListWidget(self.centralwidget)

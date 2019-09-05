@@ -1,4 +1,3 @@
-import cv2
 from PyQt5.QtCore import QSize
 from PyQt5.QtGui import QIcon, QColor
 from PyQt5.QtWidgets import QListWidgetItem, QListWidget, QApplication
@@ -12,6 +11,18 @@ class MyItem(QListWidgetItem):
         self.setBackground(QColor(200, 200, 200))  # color
         self.setSizeHint(QSize(60, 60))  # size
 
+    def get_params(self):
+        protected = [v for v in dir(self) if v.startswith('_') and not v.startswith('__')]
+        param = {}
+        for v in protected:
+            param[v.replace('_', '')] = self.__getattribute__(v)
+        return param
+
+    def update_params(self, param):
+        for k, v in param.items():
+            if '_' + k in dir(self):
+                self.__setattr__('_' + k, v)
+
 
 class GrayingItem(MyItem):
     def __init__(self, parent=None):
@@ -20,80 +31,35 @@ class GrayingItem(MyItem):
     def __call__(self, img):
         return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-    def get_params(self):
-        return None
-
-    def update_params(self, param):
-        pass
-
 
 class FilterItem(MyItem):
 
     def __init__(self, parent=None):
         super().__init__('平滑操作', parent=parent)
-        self.__ksize = 3
-        self.__kind = MEAN_FILTER
-        self.__sigmax = 0
-
-    def get_params(self):
-        return {
-            'kind': self.__kind,
-            'ksize': self.__ksize,
-        }
-
-    def update_params(self, param):
-        self.__ksize = param['ksize']
-        self.__kind = param['kind']
+        self._ksize = 3
+        self._kind = MEAN_FILTER
+        self._sigmax = 0
 
     def __call__(self, img):
-        if self.__kind == MEAN_FILTER:
-            img = cv2.blur(img, (self.__ksize, self.__ksize))
-        elif self.__kind == GAUSSIAN_FILTER:
-            img = cv2.GaussianBlur(img, (self.__ksize, self.__ksize), self.__sigmax)
-        elif self.__kind == MEDIAN_FILTER:
-            img = cv2.medianBlur(img, self.__ksize)
+        if self._kind == MEAN_FILTER:
+            img = cv2.blur(img, (self._ksize, self._ksize))
+        elif self._kind == GAUSSIAN_FILTER:
+            img = cv2.GaussianBlur(img, (self._ksize, self._ksize), self._sigmax)
+        elif self._kind == MEDIAN_FILTER:
+            img = cv2.medianBlur(img, self._ksize)
         return img
 
 
 class MorphItem(MyItem):
-
     def __init__(self, parent=None):
         super().__init__('形态操作', parent=parent)
-        self.__ksize = 3
-        self.__kind = ERODE_MORPH
-        self.__kshape = RECT_MORPH_SHAPE
-
-    def get_params(self):
-        return {
-            'kind': self.__kind,
-            'ksize': self.__ksize,
-            'kshape': self.__kshape
-        }
-
-    def update_params(self, param):
-        self.__ksize = param['ksize']
-        self.__kind = param['kind']
-        self.__kshape = param['kshape']
+        self._ksize = 3
+        self._kind = ERODE_MORPH
+        self._kshape = RECT_MORPH_SHAPE
 
     def __call__(self, img):
-        if self.__kind == ERODE_MORPH:
-            op = cv2.MORPH_ERODE
-        elif self.__kind == DILATE_MORPH:
-            op = cv2.MORPH_DILATE
-        elif self.__kind == OPEN_MORPH:
-            op = cv2.MORPH_OPEN
-        elif self.__kind == CLOSE_MORPH:
-            op = cv2.MORPH_CLOSE
-
-        if self.__kshape == RECT_MORPH_SHAPE:
-            shape = cv2.MORPH_RECT
-        elif self.__kshape == ELLIPSE_MORPH_SHAPE:
-            shape = cv2.MORPH_ELLIPSE
-        elif self.__kshape == CROSS_MORPH_SHAPE:
-            shape = cv2.MORPH_CROSS
-
-        kernal = cv2.getStructuringElement(shape, (self.__ksize, self.__ksize))
-        img = cv2.morphologyEx(img, op, kernal)
+        kernal = cv2.getStructuringElement(self._kshape, (self._ksize, self._ksize))
+        img = cv2.morphologyEx(img, self._kind, kernal)
         return img
 
 
@@ -101,31 +67,44 @@ class GradItem(MyItem):
 
     def __init__(self, parent=None):
         super().__init__('梯度操作', parent=parent)
-        self.__kind = SOBEL_GRAD
-        self.__ksize = 3
-        self.__dx = 1
-        self.__dy = 0
-
-    def get_params(self):
-        return {
-            'kind': self.__kind,
-            'ksize': self.__ksize,
-            'dx': self.__dx,
-            'dy': self.__dy,
-        }
-
-    def update_params(self, param):
-        self.__kind = param['kind']
-        self.__ksize = param['ksize']
-        self.__dx = param['dx']
-        self.__dy = param['dy']
+        self._kind = SOBEL_GRAD
+        self._ksize = 3
+        self._dx = 1
+        self._dy = 0
 
     def __call__(self, img):
-        if self.__kind == SOBEL_GRAD:
-            return cv2.Sobel(img, -1, self.__dx, self.__dy, self.__ksize)
-        elif self.__kind == SCHARR_GRAD:
-            return cv2.Scharr(img, -1, self.__dx, self.__dy)
-        elif self.__kind == LAPLACIAN_GRAD:
+        if self._dx == 0 and self._dy == 0 and self._kind != LAPLACIAN_GRAD:
+            self.setBackground(QColor(255, 0, 0))
+            self.setText('梯度操作 （无效: dx与dy不同时为0）')
+            return img
+        else:
+            self.setBackground(QColor(200, 200, 200))
+            self.setText('梯度操作')
+        if self._kind == SOBEL_GRAD:
+            return cv2.Sobel(img, -1, self._dx, self._dy, self._ksize)
+        elif self._kind == SCHARR_GRAD:
+            return cv2.Scharr(img, -1, self._dx, self._dy)
+        elif self._kind == LAPLACIAN_GRAD:
             return cv2.Laplacian(img, -1)
 
 
+class ThresholdItem(MyItem):
+    def __init__(self, parent=None):
+        super().__init__('阈值操作', parent=parent)
+        self._thresh = 127
+        self._maxval = 255
+        self._type = BINARY_THRESH
+
+    def __call__(self, img):
+        print(self._type)
+        return cv2.threshold(img, self._thresh, self._thresh, self._type)[1]
+
+
+class EdgeItem(MyItem):
+    def __init__(self, parent=None):
+        super(EdgeItem, self).__init__('边缘检测', parent=parent)
+        self._thresh1 = 20
+        self._thresh2 = 100
+
+    def __call__(self, img):
+        return cv2.Canny(img, threshold1=self._thresh1, threshold2=self._thresh2)

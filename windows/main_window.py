@@ -34,7 +34,7 @@ class Ui_MainWindow(object):
         self.treeView.setMinimumSize(QtCore.QSize(200, 0))
         self.treeView.setObjectName("treeView")
         self.horizontalLayout.addWidget(self.treeView)
-        self.label = QtWidgets.QLabel(self.centralwidget)
+        self.label = QGraphicsView(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -70,6 +70,10 @@ class Ui_MainWindow(object):
         self.stackedWidget.addWidget(self.page_3)
         self.page_4 = GradTabledWidget(parent=self)
         self.stackedWidget.addWidget(self.page_4)
+        self.page_5 = ThresholdTableWidget(parent=self)
+        self.stackedWidget.addWidget(self.page_5)
+        self.page_6 = EdgeTableWidget(parent=self)
+        self.stackedWidget.addWidget(self.page_6)
         self.verticalLayout.addWidget(self.stackedWidget)
         self.horizontalLayout.addLayout(self.verticalLayout)
         self.verticalLayout_2.addLayout(self.horizontalLayout)
@@ -89,4 +93,4 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.label.setText(_translate("MainWindow", "TextLabel"))
+        # self.label.setText(_translate("MainWindow", "TextLabel"))

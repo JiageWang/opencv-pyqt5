@@ -1,9 +1,8 @@
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
-from flags import *
 
-from .listWidgetItems import FilterItem, MorphItem, GradItem, GrayingItem, MyItem
+from config import items
 
 
 class MyListWidget(QListWidget):
@@ -40,31 +39,32 @@ class UsedListWidget(MyListWidget):
     def show_stacked_widget(self):
         item = self.itemAt(self.mapFromGlobal(QCursor.pos()))
         if not item: return
-        param = item.get_params()
-        if isinstance(item, MorphItem):
-            self.mainwindow.stackedWidget.setCurrentIndex(MORPH_STACKED_WIDGET)
-        elif isinstance(item, GradItem):
-            self.mainwindow.stackedWidget.setCurrentIndex(GRAD_STACKED_WIDGET)
-        elif isinstance(item, FilterItem):
-            self.mainwindow.stackedWidget.setCurrentIndex(FILTER_STACKED_WIDGET)
-        elif isinstance(item, GrayingItem):
-            self.mainwindow.stackedWidget.setCurrentIndex(GRAYING_STACKED_WIDGET)
-        self.mainwindow.stackedWidget.currentWidget().update_params(param)
-        self.mainwindow.stackedWidget.show()
+        param = item.get_params()  # 获取当前item的属性
+        if type(item) in items:
+            index = items.index(type(item))  # 获取item对应的table索引
+            self.mainwindow.stackedWidget.setCurrentIndex(index)
+            self.mainwindow.stackedWidget.currentWidget().update_params(param)  # 更新对应的table
+            self.mainwindow.stackedWidget.show()
 
 
 class FuncListWidget(MyListWidget):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        self.mainwindow = parent.parent()
         self.setFixedHeight(64)
         self.setFlow(QListView.LeftToRight)  # 设置列表方向
         self.setViewMode(QListView.IconMode)  # 设置列表模式
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)  # 关掉滑动条
         self.setAcceptDrops(False)
-        for itemType in [GrayingItem, FilterItem, MorphItem, GradItem]:
+        for itemType in items:
             self.addItem(itemType())
         self.itemClicked.connect(self.add_used_function)
+
+    def add_used_function(self):
+        func_item = self.currentItem()
+        if type(func_item) in items:
+            use_item = type(func_item)()
+            self.mainwindow.useListWidget.addItem(use_item)
+            self.mainwindow.update_label()
 
     def enterEvent(self, event):
         self.setCursor(Qt.PointingHandCursor)
@@ -72,16 +72,3 @@ class FuncListWidget(MyListWidget):
     def leaveEvent(self, event):
         self.setCursor(Qt.ArrowCursor)
         self.setCurrentRow(-1)  # 取消选中状态
-
-    def add_used_function(self):
-        func_item = self.currentItem()
-        if isinstance(func_item, MorphItem):
-            use_item = MorphItem()
-        elif isinstance(func_item, FilterItem):
-            use_item = FilterItem()
-        elif isinstance(func_item, GradItem):
-            use_item = GradItem()
-        elif isinstance(func_item, GrayingItem):
-            use_item = GrayingItem()
-        self.mainwindow.useListWidget.addItem(use_item)
-        self.mainwindow.update_label()

@@ -34,7 +34,11 @@ class MyApp(QMainWindow, Ui_MainWindow):
         h, w, c = img.shape  # 获取图片形状
         image = QImage(img, w, h, 3 * w, QImage.Format_RGB888)
         pixmap = QPixmap.fromImage(image)
-        self.label.setPixmap(pixmap)
+
+        self.item = QGraphicsPixmapItem(pixmap)  # 创建像素图元
+        self.scene = QGraphicsScene()  # 创建场景
+        self.scene.addItem(self.item)
+        self.label.setScene(self.scene)
 
 
 if __name__ == "__main__":

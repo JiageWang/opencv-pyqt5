@@ -26,10 +26,13 @@ class MyItem(QListWidgetItem):
 
 class GrayingItem(MyItem):
     def __init__(self, parent=None):
-        super().__init__(' 灰度化 ', parent=parent)
+        super(GrayingItem, self).__init__(' 灰度化 ', parent=parent)
+        self._mode = BGR2GRAY_COLOR
 
     def __call__(self, img):
-        return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+        img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
+        return img
 
 
 class FilterItem(MyItem):
@@ -54,12 +57,14 @@ class MorphItem(MyItem):
     def __init__(self, parent=None):
         super().__init__(' 形态学 ', parent=parent)
         self._ksize = 3
-        self._kind = ERODE_MORPH
+        self._op = ERODE_MORPH_OP
         self._kshape = RECT_MORPH_SHAPE
 
     def __call__(self, img):
-        kernal = cv2.getStructuringElement(self._kshape, (self._ksize, self._ksize))
-        img = cv2.morphologyEx(img, self._kind, kernal)
+        op = MORPH_OP[self._op]
+        kshape = MORPH_SHAPE[self._kshape]
+        kernal = cv2.getStructuringElement(kshape, (self._ksize, self._ksize))
+        img = cv2.morphologyEx(img, self._op, kernal)
         return img
 
 
@@ -76,16 +81,16 @@ class GradItem(MyItem):
         if self._dx == 0 and self._dy == 0 and self._kind != LAPLACIAN_GRAD:
             self.setBackground(QColor(255, 0, 0))
             self.setText('图像梯度 （无效: dx与dy不同时为0）')
-            return img
         else:
             self.setBackground(QColor(200, 200, 200))
             self.setText('图像梯度')
-        if self._kind == SOBEL_GRAD:
-            return cv2.Sobel(img, -1, self._dx, self._dy, self._ksize)
-        elif self._kind == SCHARR_GRAD:
-            return cv2.Scharr(img, -1, self._dx, self._dy)
-        elif self._kind == LAPLACIAN_GRAD:
-            return cv2.Laplacian(img, -1)
+            if self._kind == SOBEL_GRAD:
+                img = cv2.Sobel(img, -1, self._dx, self._dy, self._ksize)
+            elif self._kind == SCHARR_GRAD:
+                img = cv2.Scharr(img, -1, self._dx, self._dy)
+            elif self._kind == LAPLACIAN_GRAD:
+                img = cv2.Laplacian(img, -1)
+        return img
 
 
 class ThresholdItem(MyItem):
@@ -93,11 +98,14 @@ class ThresholdItem(MyItem):
         super().__init__('阈值处理', parent=parent)
         self._thresh = 127
         self._maxval = 255
-        self._type = BINARY_THRESH
+        self._method = BINARY_THRESH_METHOD
 
     def __call__(self, img):
-        print(self._type)
-        return cv2.threshold(img, self._thresh, self._thresh, self._type)[1]
+        method = THRESH_METHOD[self._method]
+        img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+        img = cv2.threshold(img, self._thresh, self._thresh, method)[1]
+        img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
+        return img
 
 
 class EdgeItem(MyItem):
@@ -107,4 +115,21 @@ class EdgeItem(MyItem):
         self._thresh2 = 100
 
     def __call__(self, img):
-        return cv2.Canny(img, threshold1=self._thresh1, threshold2=self._thresh2)
+        img = cv2.Canny(img, threshold1=self._thresh1, threshold2=self._thresh2)
+        img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
+        return img
+
+
+class ContourItem(MyItem):
+    def __init__(self, parent=None):
+        super(ContourItem, self).__init__('轮廓检测', parent=parent)
+        self._mode = TREE_CONTOUR_MODE
+        self._method = SIMPLE_CONTOUR_METHOD
+
+    def __call__(self, img):
+        mode = CONTOUR_MODE[self._mode]
+        method = CONTOUR_METHOD[self._method]
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        cnts, _ = cv2.findContours(img, mode, method)
+        img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
+        return cv2.drawContours(img, cnts, -1, (255, 0, 0))

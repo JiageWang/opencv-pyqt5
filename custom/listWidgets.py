@@ -8,7 +8,7 @@ from config import items
 class MyListWidget(QListWidget):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        self.mainwindow = parent.parent()
+        self.mainwindow = parent
         self.setDragEnabled(True)
 
 
@@ -20,6 +20,7 @@ class UsedListWidget(MyListWidget):
         self.setDragDropMode(QListView.InternalMove)  # 设置拖放模式, 内部拖放
         self.setMovement(QListView.Snap)
         self.itemClicked.connect(self.show_stacked_widget)
+        self.setMinimumWidth(200)
 
     def contextMenuEvent(self, e):
         # 右键菜单事件
@@ -33,8 +34,8 @@ class UsedListWidget(MyListWidget):
 
     def delete_item(self, item):
         self.takeItem(self.row(item))
-        self.mainwindow.update_label()  # 更新frame
-        self.mainwindow.stackedWidget.close()
+        self.mainwindow.update_image()  # 更新frame
+        self.mainwindow.dock4.close()
 
     def show_stacked_widget(self):
         item = self.itemAt(self.mapFromGlobal(QCursor.pos()))
@@ -44,7 +45,7 @@ class UsedListWidget(MyListWidget):
             index = items.index(type(item))  # 获取item对应的table索引
             self.mainwindow.stackedWidget.setCurrentIndex(index)
             self.mainwindow.stackedWidget.currentWidget().update_params(param)  # 更新对应的table
-            self.mainwindow.stackedWidget.show()
+            self.mainwindow.dock4.show()
 
 
 class FuncListWidget(MyListWidget):
@@ -64,7 +65,7 @@ class FuncListWidget(MyListWidget):
         if type(func_item) in items:
             use_item = type(func_item)()
             self.mainwindow.useListWidget.addItem(use_item)
-            self.mainwindow.update_label()
+            self.mainwindow.update_image()
 
     def enterEvent(self, event):
         self.setCursor(Qt.PointingHandCursor)

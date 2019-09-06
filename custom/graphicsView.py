@@ -18,17 +18,37 @@ class GraphicsView(QGraphicsView):
         self.setDragMode(QGraphicsView.ScrollHandDrag)  # 设置拖动
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.setMinimumSize(640, 480)
+
+    def contextMenuEvent(self, event):
+        menu = QMenu()
+        save_action = QAction('另存为', self)
+        save_action.triggered.connect(self.save_current)  # 传递额外值
+        menu.addAction(save_action)
+        menu.exec(QCursor.pos())
+
+    def save_current(self):
+        file_name = QFileDialog.getSaveFileName(self, '另存为', './', 'Image files(*.jpg *.gif *.png)')[0]
+        print(file_name)
+        if file_name:
+            self._photo.pixmap().save(file_name)
 
     def has_photo(self):
         return not self._empty
 
-    def set_image(self, img):
-        self._empty = False
+    def change_image(self, img):
+        self.update_image(img)
+        self.fitInView()
+
+    def img_to_pixmap(self, img):
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # bgr -> rgb
         h, w, c = img.shape  # 获取图片形状
         image = QImage(img, w, h, 3 * w, QImage.Format_RGB888)
-        pixmap = QPixmap.fromImage(image)
-        self._photo.setPixmap(pixmap)
+        return QPixmap.fromImage(image)
+
+    def update_image(self, img):
+        self._empty = False
+        self._photo.setPixmap(self.img_to_pixmap(img))
 
     def fitInView(self, scale=True):
         rect = QRectF(self._photo.pixmap().rect())

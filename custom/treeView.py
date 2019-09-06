@@ -4,10 +4,10 @@ import numpy as np
 from PyQt5.QtWidgets import *
 
 
-class FileSystemTreeView(QTreeView):
+class FileSystemTreeView(QTreeView, QDockWidget):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        self.mainwindow = parent.parent()
+        self.mainwindow = parent
         self.fileSystemModel = QFileSystemModel()
         self.fileSystemModel.setRootPath('.')
         self.setModel(self.fileSystemModel)
@@ -36,5 +36,5 @@ class FileSystemTreeView(QTreeView):
     def select_image(self, file_index):
         file_name = self.fileSystemModel.filePath(file_index)
         if file_name.endswith(('.jpg', '.png')):
-            self.mainwindow.src_img = cv2.imdecode(np.fromfile(file_name, dtype=np.uint8), -1)
-        self.mainwindow.update_label()
+            src_img = cv2.imdecode(np.fromfile(file_name, dtype=np.uint8), -1)
+            self.mainwindow.change_image(src_img)

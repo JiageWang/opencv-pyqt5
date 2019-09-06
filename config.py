@@ -9,7 +9,8 @@ items = [
     MorphItem,
     GradItem,
     ThresholdItem,
-    EdgeItem
+    EdgeItem,
+    ContourItem
 ]
 
 tables = [
@@ -18,6 +19,7 @@ tables = [
     MorphTabledWidget,
     GradTabledWidget,
     ThresholdTableWidget,
-    EdgeTableWidget
+    EdgeTableWidget,
+    ContourTableWidget
 ]
 

@@ -12,4 +12,22 @@ QTreeView::branch:open:has-children:!has-siblings,
 QTreeView::branch:open:has-children:has-siblings  {
     border-image: none;
 }
+QListWidget::Item:hover{
+    background: skyblue;
+}
 
+
+FuncListWidget::Item{
+    border-style: inset;
+    border-radius: 8px;
+    border: 2px solid #EEEEEE;
+    background: #CCCCCC;
+    color: #000000;
+}
+UsedListWidget::Item{
+    background: #CCCCCC;
+    color: #000000;
+}
+UsedListWidget::Item:selected{
+    background: #99CCFF;
+}

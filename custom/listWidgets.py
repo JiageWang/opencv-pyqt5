@@ -10,6 +10,9 @@ class MyListWidget(QListWidget):
         super().__init__(parent=parent)
         self.mainwindow = parent
         self.setDragEnabled(True)
+        # 选中不显示虚线
+        # self.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.setFocusPolicy(Qt.NoFocus)
 
 
 class UsedListWidget(MyListWidget):

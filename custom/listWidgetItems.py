@@ -1,6 +1,6 @@
 from PyQt5.QtCore import QSize
 from PyQt5.QtGui import QIcon, QColor
-from PyQt5.QtWidgets import QListWidgetItem, QListWidget, QApplication
+from PyQt5.QtWidgets import QListWidgetItem
 from flags import *
 
 
@@ -8,7 +8,7 @@ class MyItem(QListWidgetItem):
     def __init__(self, name=None, parent=None):
         super().__init__(name, parent=parent)
         self.setIcon(QIcon('icons/color.png'))
-        self.setBackground(QColor(200, 200, 200))  # color
+        # self.setBackground(QColor(200, 200, 200))  # color
         self.setSizeHint(QSize(60, 60))  # size
 
     def get_params(self):
@@ -125,6 +125,7 @@ class ContourItem(MyItem):
         super(ContourItem, self).__init__('轮廓检测', parent=parent)
         self._mode = TREE_CONTOUR_MODE
         self._method = SIMPLE_CONTOUR_METHOD
+        self._bbox = NORMAL_CONTOUR
 
     def __call__(self, img):
         mode = CONTOUR_MODE[self._mode]
@@ -132,4 +133,10 @@ class ContourItem(MyItem):
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         cnts, _ = cv2.findContours(img, mode, method)
         img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
-        return cv2.drawContours(img, cnts, -1, (255, 0, 0))
+        if self._bbox == RECT_CONTOUR:
+            bboxs = [cv2.boundingRect(cnt) for cnt in cnts]
+            for x, y, w, h in bboxs:
+                img = cv2.rectangle(img, (x, y), (x+w, y+h), (255, 0, 0), thickness=2)
+        elif self._bbox == NORMAL_CONTOUR:
+            return cv2.drawContours(img, cnts, -1, (255, 0, 0), thickness=2)
+        return img

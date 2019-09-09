@@ -201,6 +201,10 @@ class ContourTableWidget(TableWidget):
     def __init__(self, parent=None):
         super(ContourTableWidget, self).__init__(parent=parent)
 
+        self.bbox_comBox = QComboBox()
+        self.bbox_comBox.addItems(['正常轮廓', '外接矩形'])
+        self.bbox_comBox.setObjectName('bbox')
+
         self.mode_comBox = QComboBox()
         self.mode_comBox.addItems(['外轮廓', '轮廓列表', '外轮廓与内孔', '轮廓等级树'])
         self.mode_comBox.setObjectName('mode')
@@ -210,10 +214,12 @@ class ContourTableWidget(TableWidget):
         self.method_comBox.setObjectName('method')
 
         self.setColumnCount(2)
-        self.setRowCount(2)
+        self.setRowCount(3)
 
         self.setItem(0, 0, QTableWidgetItem('轮廓模式'))
         self.setCellWidget(0, 1, self.mode_comBox)
         self.setItem(1, 0, QTableWidgetItem('轮廓近似'))
         self.setCellWidget(1, 1, self.method_comBox)
+        self.setItem(2, 0, QTableWidgetItem('轮廓边界'))
+        self.setCellWidget(2, 1, self.bbox_comBox)
         self.signal_connect()

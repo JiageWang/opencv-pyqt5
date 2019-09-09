@@ -35,7 +35,7 @@ class UsedListWidget(MyListWidget):
     def delete_item(self, item):
         self.takeItem(self.row(item))
         self.mainwindow.update_image()  # 更新frame
-        self.mainwindow.dock4.close()
+        self.mainwindow.dock_attr.close()
 
     def show_stacked_widget(self):
         item = self.itemAt(self.mapFromGlobal(QCursor.pos()))
@@ -45,7 +45,7 @@ class UsedListWidget(MyListWidget):
             index = items.index(type(item))  # 获取item对应的table索引
             self.mainwindow.stackedWidget.setCurrentIndex(index)
             self.mainwindow.stackedWidget.currentWidget().update_params(param)  # 更新对应的table
-            self.mainwindow.dock4.show()
+            self.mainwindow.dock_attr.show()
 
 
 class FuncListWidget(MyListWidget):

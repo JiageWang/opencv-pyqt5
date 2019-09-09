@@ -13,25 +13,26 @@ class FileSystemTreeView(QTreeView, QDockWidget):
         self.setModel(self.fileSystemModel)
         self.setAnimated(True)
         self.doubleClicked.connect(self.select_image)
-        self.setStyleSheet(
-            """
-            QTreeView{
-            show-decoration-selected: 1;
-            }
-            QTreeView::item {
-            height: 30px;
-            }
-            QTreeView::branch:has-children:!has-siblings:closed,
-            QTreeView::branch:closed:has-children:has-siblings {
-            border-image: none;
-            }
-
-            QTreeView::branch:open:has-children:!has-siblings,
-            QTreeView::branch:open:has-children:has-siblings  {
-            border-image: none;
-            }
-            """)
-        self.show()
+        self.setMinimumWidth(200)
+        # self.setStyleSheet(
+        #     """
+        #     QTreeView{
+        #     show-decoration-selected: 1;
+        #     }
+        #     QTreeView::item {
+        #     height: 30px;
+        #     }
+        #     QTreeView::branch:has-children:!has-siblings:closed,
+        #     QTreeView::branch:closed:has-children:has-siblings {
+        #     border-image: none;
+        #     }
+        #
+        #     QTreeView::branch:open:has-children:!has-siblings,
+        #     QTreeView::branch:open:has-children:has-siblings  {
+        #     border-image: none;
+        #     }
+        #     """)
+        # self.show()
 
     def select_image(self, file_index):
         file_name = self.fileSystemModel.filePath(file_index)

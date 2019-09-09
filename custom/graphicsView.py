@@ -21,6 +21,8 @@ class GraphicsView(QGraphicsView):
         self.setMinimumSize(640, 480)
 
     def contextMenuEvent(self, event):
+        if not self.has_photo():
+            return
         menu = QMenu()
         save_action = QAction('另存为', self)
         save_action.triggered.connect(self.save_current)  # 传递额外值

@@ -26,7 +26,7 @@ class MyApp(QMainWindow):
 
         self.dock_func = QDockWidget(self)
         self.dock_func.setWidget(self.funcListWidget)
-        self.dock_func.setTitleBarWidget(QLabel())
+        self.dock_func.setTitleBarWidget(QLabel('工具栏'))
         self.dock_func.setFeatures(QDockWidget.NoDockWidgetFeatures)
 
         self.dock_used = QDockWidget(self)

@@ -1,14 +1,13 @@
 from PyQt5.QtCore import QSize
 from PyQt5.QtGui import QIcon, QColor
-from PyQt5.QtWidgets import QListWidgetItem
+from PyQt5.QtWidgets import QListWidgetItem, QPushButton
 from flags import *
 
 
 class MyItem(QListWidgetItem):
     def __init__(self, name=None, parent=None):
-        super().__init__(name, parent=parent)
+        super(MyItem, self).__init__(name, parent=parent)
         self.setIcon(QIcon('icons/color.png'))
-        # self.setBackground(QColor(200, 200, 200))  # color
         self.setSizeHint(QSize(60, 60))  # size
 
     def get_params(self):
@@ -22,6 +21,7 @@ class MyItem(QListWidgetItem):
         for k, v in param.items():
             if '_' + k in dir(self):
                 self.__setattr__('_' + k, v)
+
 
 
 class GrayingItem(MyItem):
@@ -136,7 +136,25 @@ class ContourItem(MyItem):
         if self._bbox == RECT_CONTOUR:
             bboxs = [cv2.boundingRect(cnt) for cnt in cnts]
             for x, y, w, h in bboxs:
-                img = cv2.rectangle(img, (x, y), (x+w, y+h), (255, 0, 0), thickness=2)
+                img = cv2.rectangle(img, (x, y), (x + w, y + h), (255, 0, 0), thickness=2)
         elif self._bbox == NORMAL_CONTOUR:
             return cv2.drawContours(img, cnts, -1, (255, 0, 0), thickness=2)
         return img
+
+
+class EqualizeItem(MyItem):
+    def __init__(self, parent=None):
+        super().__init__(' 均衡化 ', parent=parent)
+        self._blue = True
+        self._green = True
+        self._red = True
+
+    def __call__(self, img):
+        b, g, r = cv2.split(img)
+        if self._blue:
+            b = cv2.equalizeHist(b)
+        if self._green:
+            g = cv2.equalizeHist(g)
+        if self._red:
+            r = cv2.equalizeHist(r)
+        return cv2.merge((b, g, r))

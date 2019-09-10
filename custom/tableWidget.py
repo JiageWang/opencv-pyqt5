@@ -19,6 +19,8 @@ class TableWidget(QTableWidget):
             spinbox.valueChanged.connect(self.update_item)
         for combox in self.findChildren(QComboBox):
             combox.currentIndexChanged.connect(self.update_item)
+        for checkbox in self.findChildren(QCheckBox):
+            checkbox.stateChanged.connect(self.update_item)
 
     def update_item(self):
         param = self.get_params()
@@ -32,6 +34,8 @@ class TableWidget(QTableWidget):
                 box.setValue(param[key])
             elif isinstance(box, QComboBox):
                 box.setCurrentIndex(param[key])
+            elif isinstance(box, QCheckBox):
+                box.setChecked(param[key])
 
     def get_params(self):
         param = {}
@@ -39,6 +43,8 @@ class TableWidget(QTableWidget):
             param[spinbox.objectName()] = spinbox.value()
         for combox in self.findChildren(QComboBox):
             param[combox.objectName()] = combox.currentIndex()
+        for combox in self.findChildren(QCheckBox):
+            param[combox.objectName()] = combox.isChecked()
         return param
 
 
@@ -222,4 +228,29 @@ class ContourTableWidget(TableWidget):
         self.setCellWidget(1, 1, self.method_comBox)
         self.setItem(2, 0, QTableWidgetItem('轮廓边界'))
         self.setCellWidget(2, 1, self.bbox_comBox)
+        self.signal_connect()
+
+
+class EqualizeTableWidget(TableWidget):
+    def __init__(self, parent=None):
+        super(EqualizeTableWidget, self).__init__(parent=parent)
+        self.red_checkBox = QCheckBox()
+        self.red_checkBox.setObjectName('red')
+        self.red_checkBox.setTristate(False)
+        self.blue_checkBox = QCheckBox()
+        self.blue_checkBox.setObjectName('blue')
+        self.blue_checkBox.setTristate(False)
+        self.green_checkBox = QCheckBox()
+        self.green_checkBox.setObjectName('green')
+        self.green_checkBox.setTristate(False)
+
+        self.setColumnCount(2)
+        self.setRowCount(3)
+
+        self.setItem(0, 0, QTableWidgetItem('R通道'))
+        self.setCellWidget(0, 1, self.red_checkBox)
+        self.setItem(1, 0, QTableWidgetItem('G通道'))
+        self.setCellWidget(1, 1, self.green_checkBox)
+        self.setItem(2, 0, QTableWidgetItem('B通道'))
+        self.setCellWidget(2, 1, self.blue_checkBox)
         self.signal_connect()

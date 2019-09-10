@@ -6,6 +6,7 @@ from custom.listWidgetItems import *
 items = [
     GrayingItem,
     FilterItem,
+    EqualizeItem,
     MorphItem,
     GradItem,
     ThresholdItem,
@@ -16,6 +17,7 @@ items = [
 tables = [
     GrayingTableWidget,
     FilterTabledWidget,
+    EqualizeTableWidget,
     MorphTabledWidget,
     GradTabledWidget,
     ThresholdTableWidget,

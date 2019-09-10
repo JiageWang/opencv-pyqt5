@@ -36,6 +36,6 @@ class FileSystemTreeView(QTreeView, QDockWidget):
 
     def select_image(self, file_index):
         file_name = self.fileSystemModel.filePath(file_index)
-        if file_name.endswith(('.jpg', '.png')):
+        if file_name.endswith(('.jpg', '.png', '.bmp')):
             src_img = cv2.imdecode(np.fromfile(file_name, dtype=np.uint8), -1)
             self.mainwindow.change_image(src_img)

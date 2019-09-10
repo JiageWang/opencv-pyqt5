@@ -12,10 +12,18 @@ QTreeView::branch:open:has-children:!has-siblings,
 QTreeView::branch:open:has-children:has-siblings  {
     border-image: none;
 }
+
+QLabel{
+    font-size: 18px;
+    font-family: 微软雅黑
+}
+QGraphicsView{
+    background-color: #444444;
+}
+
 QListWidget::Item:hover{
     background: skyblue;
 }
-
 
 FuncListWidget::Item{
     border-style: inset;
@@ -31,3 +39,4 @@ UsedListWidget::Item{
 UsedListWidget::Item:selected{
     background: #99CCFF;
 }
+

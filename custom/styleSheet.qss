@@ -1,47 +1,84 @@
+*{
+    font-family: 微软雅黑;
+    color: #BBBBBB;
+    background-color: #2F2F2F;
+}
+
+/* 设置目录树样式 */
 QTreeView{
     show-decoration-selected: 1;
 }
-QTreeView::item {
+QTreeView::item{
     height: 30px;
+}
+QTreeView::item:hover, QTreeView::branch:hover{
+    background: #4B6EAF;
+}
+QTreeView::item:selected, QTreeView::branch:selected{
+    background: #4B6EAF;
+}
+QTreeView::branch{
+    color: #BBBBBB;
 }
 QTreeView::branch:has-children:!has-siblings:closed,
 QTreeView::branch:closed:has-children:has-siblings {
     border-image: none;
+    image: url(icons/branch-close.png);
 }
 QTreeView::branch:open:has-children:!has-siblings,
 QTreeView::branch:open:has-children:has-siblings  {
     border-image: none;
+    image: url(icons/branch-open.png);
 }
 
+/* 设置标签样式 */
 QLabel{
     font-size: 18px;
-    font-family: 微软雅黑;
-    background-color: #FFFFFF;
-    border: 1px solid #EEEEEE;
-    border-style: inset;
+    border: 1px solid #BBBBBB;
+    border-width: 1px 1px 0px 1px;
 }
+
+/* 设置视图样式 */
 QGraphicsView{
+    border: 1px solid #BBBBBB;
     background-color: #444444;
 }
+
+/* 设置列表样式 */
 QListWidget::Item{
-    color: #000000;
-    background: #CCCCCC;
+    border: 1px solid #BBBBBB;
+    font-size: 20px;
+    background: #717678;
+    color: #DDDDDD;
 }
 
 QListWidget::Item:hover{
-    background: skyblue;
+    background: #4B6EAF;
 }
 
 FuncListWidget::Item{
     border-style: inset;
     border-radius: 8px;
-    border: 2px solid #EEEEEE;
+    border: 1px solid #999999;
+    margin:0px 1px 0px 0px
 }
+
 UsedListWidget::Item{
     border: 2px solid #999999;
-    margin:1px 1px 1px 1px
+    margin:0px 0px 1px 0px
 }
+
 UsedListWidget::Item:selected{
     background: #99CCFF;
 }
+
+
+/* 设置表格样式 */
+QTableWidget{
+    alternate-background-color: #444444;
+}
+
+
+
+
 

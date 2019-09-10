@@ -1,4 +1,5 @@
 from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
 
 
 class TableWidget(QTableWidget):
@@ -13,6 +14,7 @@ class TableWidget(QTableWidget):
         self.horizontalHeader().sectionResizeMode(QHeaderView.Stretch)
         self.verticalHeader().sectionResizeMode(QHeaderView.Stretch)
         self.horizontalHeader().setStretchLastSection(True)
+        self.setFocusPolicy(Qt.NoFocus)
 
     def signal_connect(self):
         for spinbox in self.findChildren(QSpinBox):

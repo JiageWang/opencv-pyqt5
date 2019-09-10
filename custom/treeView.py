@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 
 from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
 
 
 class FileSystemTreeView(QTreeView, QDockWidget):
@@ -11,31 +12,23 @@ class FileSystemTreeView(QTreeView, QDockWidget):
         self.fileSystemModel = QFileSystemModel()
         self.fileSystemModel.setRootPath('.')
         self.setModel(self.fileSystemModel)
+        # 隐藏size,date等列
+        self.setColumnWidth(0, 200)
+        self.setColumnHidden(1, True)
+        self.setColumnHidden(2, True)
+        self.setColumnHidden(3, True)
+        # 不显示标题栏
+        self.header().hide()
+        # 设置动画
         self.setAnimated(True)
+        # 选中不显示虚线
+        self.setFocusPolicy(Qt.NoFocus)
         self.doubleClicked.connect(self.select_image)
         self.setMinimumWidth(200)
-        # self.setStyleSheet(
-        #     """
-        #     QTreeView{
-        #     show-decoration-selected: 1;
-        #     }
-        #     QTreeView::item {
-        #     height: 30px;
-        #     }
-        #     QTreeView::branch:has-children:!has-siblings:closed,
-        #     QTreeView::branch:closed:has-children:has-siblings {
-        #     border-image: none;
-        #     }
-        #
-        #     QTreeView::branch:open:has-children:!has-siblings,
-        #     QTreeView::branch:open:has-children:has-siblings  {
-        #     border-image: none;
-        #     }
-        #     """)
-        # self.show()
 
     def select_image(self, file_index):
         file_name = self.fileSystemModel.filePath(file_index)
         if file_name.endswith(('.jpg', '.png', '.bmp')):
             src_img = cv2.imdecode(np.fromfile(file_name, dtype=np.uint8), -1)
             self.mainwindow.change_image(src_img)
+

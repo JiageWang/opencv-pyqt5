@@ -20,10 +20,12 @@ class UsedListWidget(MyListWidget):
         super().__init__(parent=parent)
         self.setAcceptDrops(True)
         self.setFlow(QListView.TopToBottom)  # 设置列表方向
-        self.setDragDropMode(QListView.InternalMove)  # 设置拖放模式, 内部拖放
-        self.setMovement(QListView.Snap)
-        self.itemClicked.connect(self.show_stacked_widget)
+        self.setDefaultDropAction(Qt.MoveAction)  # 设置拖放为移动而不是复制一个
+        self.setDragDropMode(QAbstractItemView.InternalMove)  # 设置拖放模式, 内部拖放
+        self.itemClicked.connect(self.show_attr)
         self.setMinimumWidth(200)
+
+        self.move_item = None
 
     def contextMenuEvent(self, e):
         # 右键菜单事件
@@ -36,11 +38,16 @@ class UsedListWidget(MyListWidget):
         menu.exec(QCursor.pos())
 
     def delete_item(self, item):
+        # 删除操作
         self.takeItem(self.row(item))
         self.mainwindow.update_image()  # 更新frame
         self.mainwindow.dock_attr.close()
 
-    def show_stacked_widget(self):
+    def dropEvent(self, event):
+        super().dropEvent(event)
+        self.mainwindow.update_image()
+
+    def show_attr(self):
         item = self.itemAt(self.mapFromGlobal(QCursor.pos()))
         if not item: return
         param = item.get_params()  # 获取当前item的属性

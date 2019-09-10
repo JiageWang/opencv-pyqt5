@@ -15,10 +15,17 @@ QTreeView::branch:open:has-children:has-siblings  {
 
 QLabel{
     font-size: 18px;
-    font-family: 微软雅黑
+    font-family: 微软雅黑;
+    background-color: #FFFFFF;
+    border: 1px solid #EEEEEE;
+    border-style: inset;
 }
 QGraphicsView{
     background-color: #444444;
+}
+QListWidget::Item{
+    color: #000000;
+    background: #CCCCCC;
 }
 
 QListWidget::Item:hover{
@@ -29,12 +36,10 @@ FuncListWidget::Item{
     border-style: inset;
     border-radius: 8px;
     border: 2px solid #EEEEEE;
-    background: #CCCCCC;
-    color: #000000;
 }
 UsedListWidget::Item{
-    background: #CCCCCC;
-    color: #000000;
+    border: 2px solid #999999;
+    margin:1px 1px 1px 1px
 }
 UsedListWidget::Item:selected{
     background: #99CCFF;

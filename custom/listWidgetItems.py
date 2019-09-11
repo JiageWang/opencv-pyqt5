@@ -1,3 +1,4 @@
+import numpy as np
 from PyQt5.QtCore import QSize
 from PyQt5.QtGui import QIcon, QColor
 from PyQt5.QtWidgets import QListWidgetItem, QPushButton
@@ -14,14 +15,13 @@ class MyItem(QListWidgetItem):
         protected = [v for v in dir(self) if v.startswith('_') and not v.startswith('__')]
         param = {}
         for v in protected:
-            param[v.replace('_', '')] = self.__getattribute__(v)
+            param[v.replace('_', '', 1)] = self.__getattribute__(v)
         return param
 
     def update_params(self, param):
         for k, v in param.items():
             if '_' + k in dir(self):
                 self.__setattr__('_' + k, v)
-
 
 
 class GrayingItem(MyItem):
@@ -135,10 +135,20 @@ class ContourItem(MyItem):
         img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
         if self._bbox == RECT_CONTOUR:
             bboxs = [cv2.boundingRect(cnt) for cnt in cnts]
+            print(bboxs)
             for x, y, w, h in bboxs:
                 img = cv2.rectangle(img, (x, y), (x + w, y + h), (255, 0, 0), thickness=2)
+        elif self._bbox == MINRECT_CONTOUR:
+            bboxs = [np.int0(cv2.boxPoints(cv2.minAreaRect(cnt))) for cnt in cnts]
+            img = cv2.drawContours(img, bboxs, -1, (255, 0, 0), thickness=2)
+        elif self._bbox == MINCIRCLE_CONTOUR:
+            circles = [cv2.minEnclosingCircle(cnt) for cnt in cnts]
+            print(circles)
+            for (x, y), r in circles:
+                img = cv2.circle(img, (int(x), int(y)), int(r), (255, 0, 0), thickness=2)
         elif self._bbox == NORMAL_CONTOUR:
-            return cv2.drawContours(img, cnts, -1, (255, 0, 0), thickness=2)
+            img = cv2.drawContours(img, cnts, -1, (255, 0, 0), thickness=2)
+
         return img
 
 
@@ -158,3 +168,47 @@ class EqualizeItem(MyItem):
         if self._red:
             r = cv2.equalizeHist(r)
         return cv2.merge((b, g, r))
+
+
+class HoughLineItem(MyItem):
+    def __init__(self, parent=None):
+        super(HoughLineItem, self).__init__('直线检测', parent=parent)
+        self._rho = 1
+        self._theta = np.pi / 180
+        self._thresh = 10
+        self._min_length = 20
+        self._max_gap = 5
+
+    def __call__(self, img):
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        lines = cv2.HoughLinesP(img, self._rho, self._theta, self._thresh, minLineLength=self._min_length,
+                                maxLineGap=self._max_gap)
+        img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
+        if lines is None: return img
+        for line in lines:
+            for x1, y1, x2, y2 in line:
+                img = cv2.line(img, (x1, y1), (x2, y2), (0, 255, 0), thickness=2)
+        return img
+
+
+class LightItem(MyItem):
+    def __init__(self, parent=None):
+        super(LightItem, self).__init__('亮度调节', parent=parent)
+        self._alpha = 1
+        self._beta = 0
+
+    def __call__(self, img):
+        blank = np.zeros(img.shape, img.dtype)
+        img = cv2.addWeighted(img, self._alpha, blank, 1 - self._alpha, self._beta)
+        return img
+
+
+class GammaItem(MyItem):
+    def __init__(self, parent=None):
+        super(GammaItem, self).__init__('伽马校正', parent=parent)
+        self._gamma = 1
+
+    def __call__(self, img):
+        gamma_table = [np.power(x / 255.0, self._gamma) * 255.0 for x in range(256)]
+        gamma_table = np.round(np.array(gamma_table)).astype(np.uint8)
+        return cv2.LUT(img, gamma_table)

@@ -11,7 +11,10 @@ items = [
     GradItem,
     ThresholdItem,
     EdgeItem,
-    ContourItem
+    ContourItem,
+    HoughLineItem,
+    LightItem,
+    GammaItem
 ]
 
 tables = [
@@ -22,6 +25,10 @@ tables = [
     GradTabledWidget,
     ThresholdTableWidget,
     EdgeTableWidget,
-    ContourTableWidget
+    ContourTableWidget,
+    HoughLineTableWidget,
+    LightTableWidget,
+    GammaITabelWidget
+
 ]
 

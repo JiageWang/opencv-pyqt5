@@ -19,6 +19,8 @@ class TableWidget(QTableWidget):
     def signal_connect(self):
         for spinbox in self.findChildren(QSpinBox):
             spinbox.valueChanged.connect(self.update_item)
+        for doublespinbox in self.findChildren(QDoubleSpinBox):
+            doublespinbox.valueChanged.connect(self.update_item)
         for combox in self.findChildren(QComboBox):
             combox.currentIndexChanged.connect(self.update_item)
         for checkbox in self.findChildren(QCheckBox):
@@ -32,7 +34,7 @@ class TableWidget(QTableWidget):
     def update_params(self, param=None):
         for key in param.keys():
             box = self.findChild(QWidget, name=key)
-            if isinstance(box, QSpinBox):
+            if isinstance(box, QSpinBox) or isinstance(box, QDoubleSpinBox):
                 box.setValue(param[key])
             elif isinstance(box, QComboBox):
                 box.setCurrentIndex(param[key])
@@ -43,6 +45,8 @@ class TableWidget(QTableWidget):
         param = {}
         for spinbox in self.findChildren(QSpinBox):
             param[spinbox.objectName()] = spinbox.value()
+        for doublespinbox in self.findChildren(QDoubleSpinBox):
+            param[doublespinbox.objectName()] = doublespinbox.value()
         for combox in self.findChildren(QComboBox):
             param[combox.objectName()] = combox.currentIndex()
         for combox in self.findChildren(QCheckBox):
@@ -210,7 +214,7 @@ class ContourTableWidget(TableWidget):
         super(ContourTableWidget, self).__init__(parent=parent)
 
         self.bbox_comBox = QComboBox()
-        self.bbox_comBox.addItems(['正常轮廓', '外接矩形'])
+        self.bbox_comBox.addItems(['正常轮廓', '外接矩形', '最小外接矩形', '最小外接圆'])
         self.bbox_comBox.setObjectName('bbox')
 
         self.mode_comBox = QComboBox()
@@ -228,7 +232,7 @@ class ContourTableWidget(TableWidget):
         self.setCellWidget(0, 1, self.mode_comBox)
         self.setItem(1, 0, QTableWidgetItem('轮廓近似'))
         self.setCellWidget(1, 1, self.method_comBox)
-        self.setItem(2, 0, QTableWidgetItem('轮廓边界'))
+        self.setItem(2, 0, QTableWidgetItem('边界模式'))
         self.setCellWidget(2, 1, self.bbox_comBox)
         self.signal_connect()
 
@@ -255,4 +259,76 @@ class EqualizeTableWidget(TableWidget):
         self.setCellWidget(1, 1, self.green_checkBox)
         self.setItem(2, 0, QTableWidgetItem('B通道'))
         self.setCellWidget(2, 1, self.blue_checkBox)
+        self.signal_connect()
+
+
+class HoughLineTableWidget(TableWidget):
+    def __init__(self, parent=None):
+        super(HoughLineTableWidget, self).__init__(parent=parent)
+
+        self.thresh_spinBox = QSpinBox()
+        self.thresh_spinBox.setMinimum(0)
+        self.thresh_spinBox.setSingleStep(1)
+        self.thresh_spinBox.setObjectName('thresh')
+
+        self.min_length_spinBox = QSpinBox()
+        self.min_length_spinBox.setMinimum(0)
+        self.min_length_spinBox.setSingleStep(1)
+        self.min_length_spinBox.setObjectName('min_length')
+
+        self.max_gap_spinbox = QSpinBox()
+        self.max_gap_spinbox.setMinimum(0)
+        self.max_gap_spinbox.setSingleStep(1)
+        self.max_gap_spinbox.setObjectName('max_gap')
+
+        self.setColumnCount(2)
+        self.setRowCount(3)
+
+        self.setItem(0, 0, QTableWidgetItem('交点阈值'))
+        self.setCellWidget(0, 1, self.thresh_spinBox)
+        self.setItem(1, 0, QTableWidgetItem('最小长度'))
+        self.setCellWidget(1, 1, self.min_length_spinBox)
+        self.setItem(2, 0, QTableWidgetItem('最大间距'))
+        self.setCellWidget(2, 1, self.max_gap_spinbox)
+        self.signal_connect()
+
+
+class LightTableWidget(TableWidget):
+    def __init__(self, parent=None):
+        super(LightTableWidget, self).__init__(parent=parent)
+
+        self.alpha_spinBox = QDoubleSpinBox()
+        self.alpha_spinBox.setMinimum(0)
+        self.alpha_spinBox.setMaximum(3)
+        self.alpha_spinBox.setSingleStep(0.1)
+        self.alpha_spinBox.setObjectName('alpha')
+
+        self.beta_spinbox = QSpinBox()
+        self.beta_spinbox.setMinimum(0)
+        self.beta_spinbox.setSingleStep(1)
+        self.beta_spinbox.setObjectName('beta')
+
+        self.setColumnCount(2)
+        self.setRowCount(2)
+
+        self.setItem(0, 0, QTableWidgetItem('alpha'))
+        self.setCellWidget(0, 1, self.alpha_spinBox)
+        self.setItem(1, 0, QTableWidgetItem('beta'))
+        self.setCellWidget(1, 1, self.beta_spinbox)
+        self.signal_connect()
+
+
+class GammaITabelWidget(TableWidget):
+    def __init__(self, parent=None):
+        super(GammaITabelWidget, self).__init__(parent=parent)
+        self.gamma_spinbox = QDoubleSpinBox()
+        self.gamma_spinbox.setMinimum(0)
+        self.gamma_spinbox.setSingleStep(0.1)
+        self.gamma_spinbox.setObjectName('gamma')
+
+        self.setColumnCount(2)
+        self.setRowCount(1)
+
+        self.setItem(0, 0, QTableWidgetItem('gamma'))
+        self.setCellWidget(0, 1, self.gamma_spinbox)
         self.signal_connect()

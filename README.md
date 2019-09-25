@@ -4,9 +4,11 @@
 
 # Dependency
 * opencv-python
+* matplotlib
 * pyqt5
 
 ## 已实现功能
+* 图像旋转
 * 转灰度图
 * 图像平滑
 * 直方图均衡化

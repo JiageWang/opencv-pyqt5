@@ -35,6 +35,10 @@ class GraphicsView(QGraphicsView):
         if file_name:
             self._photo.pixmap().save(file_name)
 
+    def get_image(self):
+        if self.has_photo():
+            return self._photo.pixmap().toImage()
+
     def has_photo(self):
         return not self._empty
 

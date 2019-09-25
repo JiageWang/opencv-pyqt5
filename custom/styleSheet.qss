@@ -79,6 +79,8 @@ QTableWidget{
 }
 
 
-
+QToolButton:hover{
+    background: #4B6EAF;
+}
 
 
